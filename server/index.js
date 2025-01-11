@@ -1,4 +1,3 @@
-// server/index.js
 require('dotenv').config();
 require('./config/passport');
 const express = require('express');
@@ -6,13 +5,10 @@ const mongoose = require('mongoose');
 const cors = require('cors');
 const cookieSession = require('cookie-session');
 const passport = require('passport');
-
-
 const app = express();
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 1. Mongoose Connection
-// ─────────────────────────────────────────────────────────────────────────────
+
+// Mongoose Connection
 mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true
@@ -22,9 +18,8 @@ mongoose.connect(process.env.MONGODB_URI, {
   console.error('MongoDB connection error:', err);
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 2. Express Middlewares
-// ─────────────────────────────────────────────────────────────────────────────
+
+// Express Middlewares
 app.use(cors({
   origin: 'http://localhost:3000', // React App
   credentials: true,
@@ -40,17 +35,15 @@ app.use(cookieSession({
 app.use(passport.initialize());
 app.use(passport.session());
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 3. Routes
-// ─────────────────────────────────────────────────────────────────────────────
+
+// Routes
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes.js');
 app.use('/auth', authRoutes);
 app.use('/api', userRoutes);
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 4. Start Server
-// ─────────────────────────────────────────────────────────────────────────────
+
+// Start Server
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);

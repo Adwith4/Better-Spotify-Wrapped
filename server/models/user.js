@@ -1,5 +1,5 @@
-// server/models/User.js
 const mongoose = require('mongoose');
+const { isNullOrUndefined } = require('mongoose/lib/utils');
 
 const userSchema = new mongoose.Schema({
   spotifyId: {
@@ -11,14 +11,22 @@ const userSchema = new mongoose.Schema({
   email: String,
   profileUrl: String,
   images: [String],
-
-  accessToken: String,
-  refreshToken: String,
-
-  stats: [{
+  accessToken: {
+    type: String,
+    required: true,
+  },
+  refreshToken: {
+    type: String,
+    required: true,
+  },
+  tokenExpiresAt: {
+    type: Date,
+  },
+  stats: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Stats'
-  }]
+    ref: 'Stats',
+    default: null
+  },
 });
 
 module.exports = mongoose.model('User', userSchema);

@@ -1,0 +1,46 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gradient-to-b from-spotify-black to-black text-spotify-white min-h-screen font-montserrat;
+  }
+}
+
+@layer components {
+  .spotify-button {
+    @apply bg-spotify-green text-spotify-black px-6 py-3 rounded-full font-bold text-lg 
+           hover:bg-green-400 transition-all duration-300 transform hover:scale-105;
+  }
+  
+  .slide-container {
+    @apply min-h-screen p-8 max-w-7xl mx-auto bg-gradient-to-b from-spotify-black to-black;
+  }
+  
+  .slide-title {
+    @apply text-4xl font-bold text-center mb-8 text-spotify-white;
+  }
+  
+  .slide-content {
+    @apply w-full max-w-4xl mx-auto text-spotify-white;
+  }
+
+  .nav-button {
+    @apply px-6 py-3 rounded-full font-bold transition-all duration-300 transform hover:scale-105;
+  }
+
+  .nav-button-primary {
+    @apply bg-spotify-green text-spotify-black hover:bg-green-400;
+  }
+
+  .nav-button-secondary {
+    @apply bg-spotify-gray/30 text-spotify-white hover:bg-spotify-gray/50;
+  }
+
+  .card {
+    @apply bg-spotify-gray/20 p-4 rounded-lg transition-all duration-300 hover:bg-spotify-gray/30;
+  }
+}

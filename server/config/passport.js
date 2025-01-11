@@ -1,12 +1,8 @@
-// server/config/passport.js
 const passport = require('passport');
 const SpotifyStrategy = require('passport-spotify').Strategy;
 const User = require('../models/user');
 
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-
+passport.serializeUser((user, done) => done(null, user.id));
 passport.deserializeUser(async (id, done) => {
   try {
     const user = await User.findById(id);
@@ -25,33 +21,33 @@ passport.use(
     },
     async (accessToken, refreshToken, expires_in, profile, done) => {
       try {
-        // Transform the `photos` array into an array of strings
-        const images = profile.photos.map(photo => photo.value);
-
-        let existingUser = await User.findOne({ spotifyId: profile.id });
-        if (!existingUser) {
-          existingUser = await User.create({
+        let user = await User.findOne({ spotifyId: profile.id });
+        if (!user) {
+          // Create user with no stats
+          const userData = {
             spotifyId: profile.id,
             displayName: profile.displayName,
-            email: profile.emails?.[0]?.value || '',
-            profileUrl: profile.profileUrl || '',
-            images, // Use the transformed array of image URLs
+            email: profile.emails?.[0]?.value,
+            profileUrl: profile.profileUrl,
+            images: profile.photos?.map(photo => photo.value) || [],
             accessToken,
             refreshToken,
-          });
+            tokenExpiresAt: new Date(Date.now() + expires_in * 1000)
+          };
+          user = await User.create(userData);
         } else {
-          existingUser.accessToken = accessToken;
-          existingUser.refreshToken = refreshToken;
-          existingUser.images = images; // Update images if necessary
-          await existingUser.save();
+          user.accessToken = accessToken;
+          user.refreshToken = refreshToken;
+          user.tokenExpiresAt = new Date(Date.now() + expires_in * 1000);
+          if (!user.stats) {
+            user.stats = null; //Set to null if undefined
+          }
+          await user.save();
         }
-        return done(null, existingUser);
+        done(null, user);
       } catch (err) {
-        console.error('Error in Spotify strategy:', err);
-        return done(err, null);
+        done(err, null);
       }
     }
   )
 );
-
-module.exports = passport;
